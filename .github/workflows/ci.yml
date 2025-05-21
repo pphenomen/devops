@@ -11,10 +11,9 @@ env:
 jobs:
   build-and-push:
     runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run tests
-        run: pytest
+    permissions:
+      contents: read
+      packages: write
     services:
       postgres:
         image: postgres
@@ -24,9 +23,6 @@ jobs:
           POSTGRES_DB: kubsu
         ports:
           - 5432:5432
-    permissions:
-      contents: read
-      packages: write
 
     steps:
       - name: Checkout Code
@@ -51,3 +47,4 @@ jobs:
       - name: Run tests
         run: |
           docker run --network=host -e DATABASE_URL="postgresql+psycopg://kubsu:kubsu@127.0.0.1:5432/kubsu" ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest pytest tests
+
